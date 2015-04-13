@@ -1,6 +1,6 @@
 import runner from '../lib/index.js';
-import {assert} from 'chai';
-import sinon from 'sinon';
+import assert from 'assert';
+import sinon  from 'sinon';
 
 describe('Running multiple tasks', () => {
     it('Can pass a value that begins at first task', done => {
@@ -8,7 +8,7 @@ describe('Running multiple tasks', () => {
         let spy1 = sinon.spy();
         let spy2 = sinon.spy();
 
-        let task1 = function (deferred, previous) {
+        let task1 = function (deferred) {
             spy1();
             setTimeout(() => deferred.resolve('task 1'), 200);
         };
@@ -57,6 +57,24 @@ describe('Running multiple tasks', () => {
         };
 
         return runner([task1], 'Initial').then((result) => {
+            assert.equal(result, 'Initial - task 1');
+            sinon.assert.calledOnce(spy1);
+            done();
+        });
+    });
+
+    it('Creating a bound function', done => {
+
+        let spy1 = sinon.spy();
+
+        let task1 = function (deferred, previous) {
+            spy1();
+            setTimeout(() => deferred.resolve(`${previous} - task 1`), 200);
+        };
+
+        let all = runner.create([task1]);
+
+        return all('Initial').then((result) => {
             assert.equal(result, 'Initial - task 1');
             sinon.assert.calledOnce(spy1);
             done();

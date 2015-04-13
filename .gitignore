@@ -3,5 +3,5 @@
 npm-debug.log
 npm-log*
 node_modules
-test/specs/
+/test/
 lib/specs/
