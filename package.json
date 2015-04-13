@@ -1,0 +1,31 @@
+{
+  "name": "prom-seq",
+  "version": "1.0.0",
+  "description": "Just a sequence of promises",
+  "main": "lib/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "files": [
+    "lib/index.js"
+  ],
+  "devDependencies": {
+    "babel": "^5.0.10",
+    "chai": "^2.2.0",
+    "jshint": "^2.6.3",
+    "mocha": "^2.2.4",
+    "sinon": "^1.14.1"
+  },
+  "scripts": {
+    "lint": "jshint src/*/*.js",
+    "es6": "babel src --out-dir .",
+    "es6-watch": "babel src --out-dir . --watch",
+    "unit": "npm run es6 && mocha --recursive test",
+    "test": "npm run lint && npm run unit"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "q": "^1.2.0"
+  }
+}
