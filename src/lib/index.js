@@ -1,5 +1,6 @@
+var Q = require('q');
+
 function run (tasks, initial) {
-    let Q = require('q');
     return tasks.reduce((previous, item) => {
         let deferred = Q.defer();
         return previous.then((previousvalue) => {
@@ -10,6 +11,7 @@ function run (tasks, initial) {
 }
 
 module.exports = run;
+module.exports.defer = Q.defer;
 
 module.exports.create = function (tasks) {
     return run.bind(null, tasks);

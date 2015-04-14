@@ -80,4 +80,17 @@ describe('Running multiple tasks', () => {
             done();
         });
     });
+
+    it('exposes Q.defer for skipping some tasks', function () {
+
+        let task1 = function (deferred, previous) {
+            setTimeout(() => deferred.resolve(`${previous} - task 1`), 200);
+            return deferred.promise;
+        };
+
+        return task1(runner.defer(), 'Initial')
+            .then((res) => {
+                assert.equal(res, 'Initial - task 1');
+            });
+    });
 });
