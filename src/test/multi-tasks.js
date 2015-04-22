@@ -93,4 +93,49 @@ describe('Running multiple tasks', () => {
                 assert.equal(res, 'Initial - task 1');
             });
     });
+
+    it('flattens arrays in arrays', function () {
+
+        let callCount = 0;
+        let task1 = function (deferred, previous) {
+            callCount += 1;
+            setTimeout(() => deferred.resolve(previous + ' ' + callCount), 0);
+            return deferred.promise;
+        };
+
+        let arr = [task1, task1, [task1, task1, [task1, task1, [task1, task1]]]];
+
+        let all = runner.create(arr);
+
+        return all('0')
+            .then((out) => {
+                assert.equal(callCount, 8);
+                assert.equal(out, '0 1 2 3 4 5 6 7 8');
+            });
+    });
+
+    it('Propagates progress messages', function () {
+
+        let task1 = function (deferred) {
+            deferred.notify('From task 1');
+            deferred.resolve();
+        };
+
+        let task2 = function (deferred) {
+            deferred.notify('From task 2');
+            deferred.resolve();
+        };
+
+        let arr = [task1, task2];
+        let spy = sinon.spy();
+        let all = runner.create(arr);
+
+        return all()
+            .progress(spy)
+            .then(function () {
+                sinon.assert.calledTwice(spy);
+                sinon.assert.calledWithExactly(spy, 'From task 1');
+                sinon.assert.calledWithExactly(spy, 'From task 2');
+            });
+    });
 });
