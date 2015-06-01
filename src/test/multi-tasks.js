@@ -18,7 +18,7 @@ describe('Running multiple tasks', () => {
             setTimeout(() => deferred.resolve(`${previous} - task 2`), 200);
         };
 
-        return runner([task1, task2]).then((result) => {
+        return runner([task1, task2], 'initial').then((result) => {
             assert.equal(result, 'task 1 - task 2');
             sinon.assert.calledOnce(spy1);
             sinon.assert.calledOnce(spy2);
@@ -137,5 +137,19 @@ describe('Running multiple tasks', () => {
                 sinon.assert.calledWithExactly(spy, 'From task 1');
                 sinon.assert.calledWithExactly(spy, 'From task 2');
             });
+    });
+
+    it('Passes context as third argument', function () {
+
+        let task1 = function (deferred, initial, context) {
+            assert.equal(initial, 'initial');
+            assert.equal(context.some, 'context');
+            deferred.resolve();
+        };
+
+        let arr = [task1];
+        let all = runner.create(arr);
+
+        return all('initial', {some: 'context'});
     });
 });

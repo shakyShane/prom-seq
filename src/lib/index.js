@@ -1,12 +1,16 @@
 let Q = require('q');
 
-function run (tasks, initial) {
+function run (...args) {
+    let tasks = args[0];
+    let initial = args[1];
+    let context = args[2];
+
     let end = Q.defer();
     let list = tasks.reduce((previous, item) => {
         let deferred = Q.defer();
         deferred.promise.progress(end.notify);
         return previous.then((previousvalue) => {
-            item(deferred, previousvalue);
+            item(deferred, previousvalue, context);
             return deferred.promise;
         });
     }, Q.resolve(initial));
